@@ -12,101 +12,87 @@
 
 import marimo
 
-__generated_with = "0.14.9"
+__generated_with = "0.23.6"
 app = marimo.App(width="medium")
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# Why matplotlib?""")
+    mo.md(r"""
+    # Why matplotlib?
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        """
+    mo.md("""
     *An introduction to Matplotlib's place in the Python visualization ecosystem and its design philosophy.*
 
 
-    [matplotilb](https://matplotlib.org/) is an awesome Python data visualization library--it forms the backbone of several plotting libraries, it's incredibly well documented, and it supports everything from simple plots to complex and interactive graphs. In their own words:  
+    [matplotilb](https://matplotlib.org/) is an awesome Python data visualization library--it forms the backbone of several plotting libraries, it's incredibly well documented, and it supports everything from simple plots to complex and interactive graphs. In their own words:
 
-    > "matplotlib makes easy things easy and hard things possible"
-    """
-    )
+    /// admonition | "matplotlib makes easy things easy and hard things possible"
+    ///
+    """)
     return
 
 
 @app.cell
 def _():
     import marimo as mo
+    import numpy as np
     import pandas as pd
     import matplotlib.pyplot as plt
-    return mo, pd, plt
+    from matplotlib import cbook, cm
+    from matplotlib.colors import LightSource
+
+    return LightSource, cbook, cm, mo, np, pd, plt
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        """
-    insert examples here
+    mo.md(r"""
+    ## Some examples
+    Here's some examples from the Matplotlib docs and across the web.
 
-
-
-    ### Who uses matplotib?
-    Matplotlib is one of the python ecosystem's most widely used plotting libraries. It might be just *the* most popular.  Matplotlib was part of the O.G. Swiss army knife of python data science, alongside Numpy, pandas, scipy, and scikit-learn.  
-
-    But you don't have to be a data scientist to work with Matplotlib. Analysts, Business Intelligence aficionados, and weekend hobbyists alike can all benefit from its extensive features.
-
-    ### What about plotly, altair, and seaborn?
-
-    Sure, there are some awesome new kids on the block, and they offer some amazing capabilities, sometimes extending on matplotlib itself. If you're data visualisation curious, you should check out the hvplot and plotly courses in marimo learn.  If you're just getting started with data visualisation with Python, you can't go wrong with getting your feet wet with matplotlib.
-
-
-    ### When should I use matplotlib?
-
-    matplotlib can be used for simple line, scatter, and bar charts, as well as statistical visualisations, choropleths, 3D plots, and more. matplotlib leverages python objects to nail the user experience with plots. You get a Figure, an Axes, and a cornucopia of functions and methods to spin up the chart you need.
-
-    Use matplotlib when you:  
-    - need reproducible charts  
-    - want full control over a visual  
-    - just want your chart to work, no frills  
-
-
-    ### A taste of what plt can do with marimo
-
-    Let's take a quick look at what matplotlib can do.
-
-    #### Quick and easy data exploration
-    """
-    )
+    Matplotlib offers a couple interfaces: one functional, one OOP. Let's take a look at the functional interface first:
+    """)
     return
 
 
 @app.cell
 def _(plt):
+    # 4 lines of code gets us a simple visual :)
     plt.plot([1, 2, 3, 4])
     plt.ylabel("Some numbers")
     plt.title("Basic line plot")
-    plt.show()
+    # plt.gca() gets the current `Axes`
+    plt.gca()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Now let's take a look at the OOP interface:
+    """)
     return
 
 
 @app.cell
-def _(pd):
+def _(pd, plt):
     climate_data = pd.read_csv(
-        'https://assets.datacamp.com/production/repositories/3634/datasets/411add3f8570d5adf891127fd64095020210711b/climate_change.csv',
+        "https://assets.datacamp.com/production/repositories/3634/datasets/411add3f8570d5adf891127fd64095020210711b/climate_change.csv",
         parse_dates=True,
-        index_col='date'
+        index_col="date",
     )
-    climate_data
-    return (climate_data,)
 
-
-@app.cell
-def _(climate_data, plt):
+    # plt.subplots returns a Figure and Axis object. 
+    # here, we ask for 2 rows and one column that share an x-axis
     _fig, _ax = plt.subplots(2, 1, sharex=True)
 
+    # Data is plotted by indexing a row  
     _ax[0].plot(
         climate_data.index,
         climate_data['co2']
@@ -115,70 +101,183 @@ def _(climate_data, plt):
         climate_data.index,
         climate_data['relative_temp']
     )
-    plt.show()
+
+    # Chart customisations must also be called on each index
+    # The axis annotation methods are different to the plt.plot() interface
+    _ax[0].set_title("Global rise in C02 and relative temperature")
+    _ax[0].set_ylabel("C02 (ppm)")
+    _ax[1].set_xlabel("Year")
+    _ax[1].set_ylabel("Relative temperature (°C)")
+
+    # Return the Figure
+    _fig
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    mo.md("""#### 3d plots""")
+    mo.md("""
+    ### 3d plots
+    Everybody thinks 3D plots are cool. Here's an example which is available from the marimo snippets pane:
+    """)
     return
 
 
-@app.cell
-def _(plt):
-    import numpy as np
-
-    from matplotlib import cbook, cm
-    from matplotlib.colors import LightSource
-
+@app.cell(hide_code=True)
+def _(LightSource, cbook, cm, np, plt):
     # Load and format data
     dem = cbook.get_sample_data('jacksboro_fault_dem.npz')
-    z = dem['elevation']
-    nrows, ncols = z.shape
-    x = np.linspace(dem['xmin'], dem['xmax'], ncols)
-    y = np.linspace(dem['ymin'], dem['ymax'], nrows)
-    x, y = np.meshgrid(x, y)
+    _z = dem['elevation']
+    nrows, ncols = _z.shape
+    _x = np.linspace(dem['xmin'], dem['xmax'], ncols)
+    _y = np.linspace(dem['ymin'], dem['ymax'], nrows)
+    _x, _y = np.meshgrid(_x, _y)
 
     region = np.s_[5:50, 5:50]
-    x, y, z = x[region], y[region], z[region]
+    _x, _y, _z = _x[region], _y[region], _z[region]
 
     # Set up plot
     _fig, _ax = plt.subplots(subplot_kw=dict(projection='3d'))
 
     ls = LightSource(270, 45)
+
     # To use a custom hillshading mode, override the built-in shading and pass
     # in the rgb colors of the shaded surface calculated from "shade".
-    rgb = ls.shade(z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')
-    surf = _ax.plot_surface(x, y, z, rstride=1, cstride=1, facecolors=rgb,
+    rgb = ls.shade(_z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')
+    surf = _ax.plot_surface(_x, _y, _z, rstride=1, cstride=1, facecolors=rgb,
                            linewidth=0, antialiased=False, shade=False)
 
-    plt.show()
+    plt.gca()
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-    #### maps
+    mo.md("""
+    ### maps
 
 
-    #### infographics
+    ### infographics
+    """)
+    return
 
 
-    ## learn more
-    check out the rest of the course to learn more
-    """
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Adding Interactivity
+    Naturally, since we're using marimo we may want to add some interactivity to our matplotlib charts.
+
+    Here's an example with some simple [sliders](https://docs.marimo.io/api/inputs/slider/#marimo.ui.slider):
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    n_points = mo.ui.slider(
+        20,
+        100,
+        value=50,
+        label="Smoothness"
+    )
+    n_points
+    return (n_points,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    wave_length = mo.ui.slider(
+        2,
+        10,
+        value=5,
+        label="Wave length"
+    )
+    wave_length
+    return (wave_length,)
+
+
+@app.cell
+def _(n_points, np, plt, wave_length):
+    _x = np.linspace(0, wave_length.value * np.pi, n_points.value)
+
+    plt.plot(_x, np.sin(_x))
+    plt.title(f"Sine wave with {n_points.value} points")
+    plt.gca()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    /// admonition | Marimo also supports using lasso and box selection tools!
+
+    Use [`mo.ui.matplotlib`](https://docs.marimo.io/api/plotting/#marimo.ui.matplotlib) to make matplotlib plots reactive: select data on the frontend, then use the selection to filter your data in Python.
+
+    ///
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Design philosophy
+
+    ### Parts of a figure
+
+    At the core of Matplotlib chart architecture are four objects:
+    * a `Figure`
+    * an `Axes`
+    * two or more `Axis` objects
+    * `Artists`
+
+    The Axes are the individual sets of indices, starting with at least one X-axis and Y-axis.
+
+    The Figure is where the Axes are contained.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.image(
+        src="https://matplotlib.org/stable/_images/anatomy.png",
+        alt="Parts of a Matplotlib figure",
+        width=500,
+        height=500,
+        caption="An example of a Matplotlib figure, with annotations for the different objects, artists, and code."
     )
     return
 
 
-@app.cell
-def _(plt):
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel('some numbers')
-    plt.show()
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Coding style
+    As we saw earlier, Matplotlib offers two* interfaces for graphing data: `pyplot`, the functional interface, and the object-oriented (OO) style.
+
+    In Matplotlib documentation, you'll see a mix of both styles, with the OO style recommended in general, especially for complex graphs and reproducible behaviours.
+
+    For quick interactive work, the pyplot interface may be preferred.
+
+    For Marimo,
+
+
+    *There's also a third interface, to be used when embedding Matplotlib in GUI applications.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("""
+    ## More
+    * Check out the rest of this Marimo Learn course
+    * Read the docs for marimo-specific considerations when working with matplotlib: https://docs.marimo.io/guides/working_with_data/plotting/
+    * Read the [Matplotlib Quick Start Guide](https://matplotlib.org/stable/users/explain/quick_start.html)
+    * Search the marimo snippets list in the developer panel (`ctrl/cmd + j`) for a bunch of Matplotlib examples
+    """)
     return
 
 
