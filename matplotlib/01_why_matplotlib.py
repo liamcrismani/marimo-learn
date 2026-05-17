@@ -30,9 +30,9 @@ def _(mo):
     *An introduction to Matplotlib's place in the Python visualization ecosystem and its design philosophy.*
 
 
-    [matplotilb](https://matplotlib.org/) is an awesome Python data visualization library--it forms the backbone of several plotting libraries, it's incredibly well documented, and it supports everything from simple plots to complex and interactive graphs. In their own words:
+    [Matplotilb](https://matplotlib.org/) is an awesome Python data visualization library--it forms the backbone of several plotting libraries, it's incredibly well documented, and it supports everything from simple plots to complex and interactive graphs. In their own words:
 
-    /// admonition | "matplotlib makes easy things easy and hard things possible"
+    /// admonition | "Matplotlib makes easy things easy and hard things possible"
     ///
     """)
     return
@@ -157,7 +157,6 @@ def _(mo):
     ### maps
 
 
-    ### infographics
     """)
     return
 
@@ -166,7 +165,7 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     ## Adding Interactivity
-    Naturally, since we're using marimo we may want to add some interactivity to our matplotlib charts.
+    Naturally, since we're using marimo we may want to add some interactivity to our Matplotlib charts.
 
     Here's an example with some simple [sliders](https://docs.marimo.io/api/inputs/slider/#marimo.ui.slider):
     """)
