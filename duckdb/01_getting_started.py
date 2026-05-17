@@ -2,42 +2,36 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #     "marimo",
-#     "duckdb==1.2.2",
-#     "polars==1.27.0",
-#     "numpy==2.2.4",
-#     "pyarrow==19.0.1",
-#     "pandas==2.2.3",
-#     "sqlglot==26.12.1",
-#     "plotly==5.23.1",
-#     "statsmodels==0.14.4",
+#     "duckdb==1.4.4",
+#     "numpy==2.4.3",
+#     "pandas==2.3.2",
+#     "plotly[express]==6.3.0",
+#     "polars[pyarrow]==1.24.0",
+#     "sqlglot==27.0.0",
+#     "statsmodels==0.14.5",
 # ]
 # ///
 
 import marimo
 
-__generated_with = "0.13.4"
+__generated_with = "0.18.4"
 app = marimo.App(width="medium")
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
+    mo.md(rf"""
     <p align="center">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxHAqB0W_61zuIGVMiU6sEeQyTaw-9xwiprw&s" alt="DuckDB Image"/>
     </p>
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
-    # 🦆 **DuckDB**: An Embeddable Analytical Database System
-
-    ## What is DuckDB?
+    mo.md(rf"""
+    # What is DuckDB?
 
     [DuckDB](https://duckdb.org/) is a _high-performance_, in-process, embeddable SQL OLAP (Online Analytical Processing) Database Management System (DBMS) designed for simplicity and speed. It's essentially a fully-featured database that runs directly within your application's process, without needing a separate server. This makes it excellent for complex analytical workloads, offering a robust SQL interface and efficient processing – perfect for learning about databases and data analysis concepts.  It's a great alternative to heavier database systems like PostgreSQL or MySQL when you don't need a full-blown server.
 
@@ -83,15 +77,13 @@ def _(mo):
     /// attention | Note
     DuckDB requires Python 3.7 or newer. You also need to have Python and `pip` or `conda` installed on your system.
     ///
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     # [1. DuckDB Connections: In-Memory vs. File-based](https://duckdb.org/docs/stable/connect/overview.html)
 
     DuckDB is a lightweight, _relational database management system (RDBMS)_ designed for analytical workloads. Unlike traditional client-server databases, it operates _in-process_ (embedded within your application) and supports both _in-memory_ (temporary) and _file-based_ (persistent) storage.
@@ -105,8 +97,7 @@ def _(mo):
     | Performance | Faster for most operations | Slightly slower but provides persistence |
     | Creation | duckdb.connect(':memory:') | duckdb.connect('filename.db') |
     | Multiple Connection Access | Limited to single connection | Multiple connections can access the same database |
-    """
-    )
+    """)
     return
 
 
@@ -134,8 +125,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        """
+    mo.md("""
     ## Creating DuckDB Connections
 
     Let's create both types of DuckDB connections and explore their characteristics.
@@ -144,8 +134,7 @@ def _(mo):
     2. **File-based connection**: Data persists between sessions
 
     We'll then demonstrate the key differences between these connection types.
-    """
-    )
+    """)
     return
 
 
@@ -176,28 +165,28 @@ def _(file_db, memory_db):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Testing Connection Persistence
 
-    Let's demonstrate how in-memory databases are ephemeral, while file-based databases persist. 
+    Let's demonstrate how in-memory databases are ephemeral, while file-based databases persist.
 
     1. First, we'll query our tables to confirm the data was properly inserted
     2. Then, we'll simulate an application restart by creating new connections
     3. Finally, we'll check which data persists after the "restart"
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Current Database Contents""")
+    mo.md(r"""
+    ## Current Database Contents
+    """)
     return
 
 
 @app.cell(hide_code=True)
-def _(mem_test, memory_db, mo):
+def _(memory_db, mo):
     _df = mo.sql(
         f"""
         SELECT * FROM mem_test
@@ -208,7 +197,7 @@ def _(mem_test, memory_db, mo):
 
 
 @app.cell(hide_code=True)
-def _(file_db, file_test, mo):
+def _(file_db, mo):
     _df = mo.sql(
         f"""
         SELECT * FROM file_test
@@ -227,7 +216,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(rf"""## 🔄 Simulating Application Restart...""")
+    mo.md(rf"""
+    ## 🔄 Simulating Application Restart...
+    """)
     return
 
 
@@ -311,8 +302,7 @@ def _(file_data, file_data_available, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     # [2. Creating Tables in DuckDB](https://duckdb.org/docs/stable/sql/statements/create_table.html)
 
     DuckDB supports standard SQL syntax for creating tables. Let's create more complex tables to demonstrate different data types and constraints.
@@ -326,8 +316,7 @@ def _(mo):
     - **CREATE OR REPLACE** to recreate tables
     - **Primary keys** and other constraints
     - **Various data types** including INTEGER, VARCHAR, TIMESTAMP, DECIMAL, etc.
-    """
-    )
+    """)
     return
 
 
@@ -406,8 +395,7 @@ def _(memory_schema, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     # [3. Inserting Data Into Tables](https://duckdb.org/docs/stable/sql/statements/insert)
 
     DuckDB supports multiple ways to insert data:
@@ -418,8 +406,7 @@ def _(mo):
     4. **Bulk inserts**: For efficient loading of multiple rows
 
     Let's demonstrate these different insertion methods:
-    """
-    )
+    """)
     return
 
 
@@ -741,8 +728,7 @@ def _(file_results, memory_results, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     # [4. Using SQL Directly in marimo](https://duckdb.org/docs/stable/sql/query_syntax/select)
 
     There are multiple ways to leverage DuckDB's SQL capabilities in marimo:
@@ -752,8 +738,7 @@ def _(mo):
     3. **Interactive queries**: Combining UI elements with SQL execution
 
     Let's explore these approaches:
-    """
-    )
+    """)
     return
 
 
@@ -808,7 +793,9 @@ def _(age_threshold, filtered_users, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# [5. Working with Polars and DuckDB](https://duckdb.org/docs/stable/guides/python/polars.html)""")
+    mo.md(r"""
+    # [5. Working with Polars and DuckDB](https://duckdb.org/docs/stable/guides/python/polars.html)
+    """)
     return
 
 
@@ -904,7 +891,9 @@ def _(complex_query_result, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# [6. Advanced Queries: Joins Between Tables](https://duckdb.org/docs/stable/guides/performance/join_operations.html)""")
+    mo.md(r"""
+    # [6. Advanced Queries: Joins Between Tables](https://duckdb.org/docs/stable/guides/performance/join_operations.html)
+    """)
     return
 
 
@@ -950,12 +939,10 @@ def _(new_memory_db):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
+    mo.md(rf"""
     <!-- Display the join result -->
     ## Join Result (Users and Departments):
-    """
-    )
+    """)
     return
 
 
@@ -967,12 +954,10 @@ def _(join_result, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
+    mo.md(rf"""
     <!-- Demonstrate different types of joins -->
     ## Different Types of Joins
-    """
-    )
+    """)
     return
 
 
@@ -1122,7 +1107,9 @@ def _(join_description, join_tabs, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# [7. Aggregate Functions in DuckDB](https://duckdb.org/docs/stable/sql/functions/aggregates.html)""")
+    mo.md(r"""
+    # [7. Aggregate Functions in DuckDB](https://duckdb.org/docs/stable/sql/functions/aggregates.html)
+    """)
     return
 
 
@@ -1224,7 +1211,9 @@ def _(mo, window_result):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# [8. Converting DuckDB Results to Polars/Pandas](https://duckdb.org/docs/stable/guides/python/polars.html)""")
+    mo.md(r"""
+    # [8. Converting DuckDB Results to Polars/Pandas](https://duckdb.org/docs/stable/guides/python/polars.html)
+    """)
     return
 
 
@@ -1342,7 +1331,9 @@ def _(mo, pandas_result):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""# 9. Data Visualization with DuckDB and Plotly""")
+    mo.md("""
+    # 9. Data Visualization with DuckDB and Plotly
+    """)
     return
 
 
@@ -1498,8 +1489,7 @@ def _(age_groups, mo, new_memory_db, plotly_express):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     /// admonition |
     ## Database Management Best Practices
     ///
@@ -1538,14 +1528,15 @@ def _(mo):
     - Create indexes for frequently queried columns
     - For large datasets, consider partitioning
     - Use prepared statements for repeated queries
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(rf"""## 10. Interactive DuckDB Dashboard with marimo and Plotly""")
+    mo.md(rf"""
+    ## 10. Interactive DuckDB Dashboard with marimo and Plotly
+    """)
     return
 
 
@@ -1736,8 +1727,7 @@ def _(
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
+    mo.md(rf"""
     # Summary and Key Takeaways
 
     In this notebook, we've explored DuckDB, a powerful embedded analytical database system. Here's what we covered:
@@ -1770,8 +1760,7 @@ def _(mo):
     - Experiment with more complex queries and window functions
     - Use DuckDB's COPY functionality to import/export data from/to files
     - Create more advanced interactive dashboards with marimo and Plotly
-    """
-    )
+    """)
     return
 
 

@@ -1,6 +1,16 @@
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "cvxpy-base",
+#     "marimo",
+#     "matplotlib==3.10.8",
+#     "numpy==2.4.3",
+#     "wigglystuff==0.2.37",
+# ]
+# ///
 import marimo
 
-__generated_with = "0.11.0"
+__generated_with = "0.18.4"
 app = marimo.App()
 
 
@@ -12,46 +22,44 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        # Minimal fuel optimal control
+    mo.md(r"""
+    # Minimal Fuel Optimal Control
 
-        This notebook includes an application of linear programming to controlling a
-        physical system, adapted from [Convex
-        Optimization](https://web.stanford.edu/~boyd/cvxbook/) by Boyd and Vandenberghe.
+    This notebook includes an application of linear programming to controlling a
+    physical system, adapted from [Convex
+    Optimization](https://web.stanford.edu/~boyd/cvxbook/) by Boyd and Vandenberghe.
 
-        We consider a linear dynamical system with state $x(t) \in \mathbf{R}^n$, for $t = 0, \ldots, T$. At each time step $t = 0, \ldots, T - 1$, an actuator or input signal $u(t)$ is applied, affecting the state. The dynamics
-        of the system is given by the linear recurrence
+    We consider a linear dynamical system with state $x(t) \in \mathbf{R}^n$, for $t = 0, \ldots, T$. At each time step $t = 0, \ldots, T - 1$, an actuator or input signal $u(t)$ is applied, affecting the state. The dynamics
+    of the system is given by the linear recurrence
 
-        \[
-            x(t + 1) = Ax(t) + bu(t), \quad t = 0, \ldots, T - 1,
-        \]
+    \[
+        x(t + 1) = Ax(t) + bu(t), \quad t = 0, \ldots, T - 1,
+    \]
 
-        where $A \in \mathbf{R}^{n \times n}$ and $b \in \mathbf{R}^n$ are given and encode how the system evolves. The initial state $x(0)$ is also given.
+    where $A \in \mathbf{R}^{n \times n}$ and $b \in \mathbf{R}^n$ are given and encode how the system evolves. The initial state $x(0)$ is also given.
 
-        The _minimum fuel optimal control problem_ is to choose the inputs $u(0), \ldots, u(T - 1)$ so as to achieve
-        a given desired state $x_\text{des} = x(T)$ while minimizing the total fuel consumed
+    The _minimum fuel optimal control problem_ is to choose the inputs $u(0), \ldots, u(T - 1)$ so as to achieve
+    a given desired state $x_\text{des} = x(T)$ while minimizing the total fuel consumed
 
-        \[
-        F = \sum_{t=0}^{T - 1} f(u(t)).
-        \]
+    \[
+    F = \sum_{t=0}^{T - 1} f(u(t)).
+    \]
 
-        The function $f : \mathbf{R} \to \mathbf{R}$ tells us how much fuel is consumed as a function of the input, and is given by
+    The function $f : \mathbf{R} \to \mathbf{R}$ tells us how much fuel is consumed as a function of the input, and is given by
 
-        \[
-            f(a) = \begin{cases}
-            |a| & |a| \leq 1 \\
-            2|a| - 1 & |a| > 1.
-            \end{cases}
-        \]
+    \[
+        f(a) = \begin{cases}
+        |a| & |a| \leq 1 \\
+        2|a| - 1 & |a| > 1.
+        \end{cases}
+    \]
 
-        This means the fuel use is proportional to the magnitude of the signal between $-1$ and $1$, but for larger signals the marginal fuel efficiency is half.
+    This means the fuel use is proportional to the magnitude of the signal between $-1$ and $1$, but for larger signals the marginal fuel efficiency is half.
 
-        **This notebook.** In this notebook we use CVXPY to formulate the minimum fuel optimal control problem as a linear program. The notebook lets you play with the initial and target states, letting you see how they affect the planned trajectory of inputs $u$.
+    **This notebook.** In this notebook we use CVXPY to formulate the minimum fuel optimal control problem as a linear program. The notebook lets you play with the initial and target states, letting you see how they affect the planned trajectory of inputs $u$.
 
-        First, we create the **problem data**.
-        """
-    )
+    First, we create the **problem data**.
+    """)
     return
 
 
@@ -85,7 +93,7 @@ def _(mo, n, np):
         rf"""
 
         Choose a value for $x_0$ ...
-        
+
         {x0_widget}
         """
     )
@@ -99,7 +107,7 @@ def _(mo, n, np):
     )
 
     mo.hstack([_a, _b], justify="space-around")
-    return wigglystuff, x0_widget, xdes_widget
+    return x0_widget, xdes_widget
 
 
 @app.cell
@@ -111,7 +119,9 @@ def _(x0_widget, xdes_widget):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""**Next, we specify the problem as a linear program using CVXPY.** This problem is linear because the objective and constraints are affine. (In fact, the objective is piecewise affine, but CVXPY rewrites it to be affine for you.)""")
+    mo.md(r"""
+    **Next, we specify the problem as a linear program using CVXPY.** This problem is linear because the objective and constraints are affine. (In fact, the objective is piecewise affine, but CVXPY rewrites it to be affine for you.)
+    """)
     return
 
 
@@ -122,30 +132,28 @@ def _():
 
 
 @app.cell
-def _(A, T, b, cp, mo, n, x0, xdes):
+def _(A, T, b, cp, mo, n, np, x0, xdes):
     X, u = cp.Variable(shape=(n, T + 1)), cp.Variable(shape=(1, T))
 
     objective = cp.sum(cp.maximum(cp.abs(u), 2 * cp.abs(u) - 1))
     constraints = [
         X[:, 1:] == A @ X[:, :-1] + b @ u,
-        X[:, 0] == x0,
-        X[:, -1] == xdes,
+        X[:, 0] == np.array(x0).flatten(),
+        X[:, -1] == np.array(xdes).flatten(),
     ]
 
     fuel_used = cp.Problem(cp.Minimize(objective), constraints).solve()
     mo.md(f"Achieved a fuel usage of {fuel_used:.02f}. 🚀")
-    return X, constraints, fuel_used, objective, u
+    return (u,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        """
-        Finally, we plot the chosen inputs over time.
+    mo.md("""
+    Finally, we plot the chosen inputs over time.
 
-        **🌊 Try it!** Change the initial and desired states; how do fuel usage and controls change? Can you explain what you see? You can also try experimenting with the value of $T$.
-        """
-    )
+    **🌊 Try it!** Change the initial and desired states; how do fuel usage and controls change? Can you explain what you see? You can also try experimenting with the value of $T$.
+    """)
     return
 
 
