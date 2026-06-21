@@ -5,11 +5,8 @@
 #     "geopandas[all]==1.1.3",
 #     "marimo",
 #     "matplotlib==3.10.3",
-#     "mcp==1.28.0",
 #     "numpy==2.3.1",
-#     "pandas==2.3.0",
-#     "polars==1.31.0",
-#     "requests==2.32.4",
+#     "pandas==2.3.0"
 # ]
 # ///
 
@@ -33,27 +30,15 @@ def _(mo):
     *An introduction to Matplotlib's place in the Python visualization ecosystem and its design philosophy.*
 
 
-    [Matplotilb](https://matplotlib.org/) is an awesome Python data visualization library--it forms the backbone of several plotting libraries, it's incredibly well documented, and it supports everything from simple plots to complex and interactive graphs. In their own words:
+    Why [Matplotlib](https://matplotlib.org/)? Part of the original Swiss Army Knife of Python data science libraries, Matplotlib is Python's foundational data visualization package–and for good reason: 
+    * It forms the backbone of several plotting libraries;
+    * it's incredibly well documented; 
+    * it supports everything from simple plots to complex and interactive graphs.
+    
+    In their own words:
 
     /// admonition | "Matplotlib makes easy things easy and hard things possible"
     ///
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ```python
-    import marimo as mo
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from matplotlib import cbook, cm
-    from matplotlib.colors import LightSource
-    import geopandas
-    import geodatasets
-    ```
     """)
     return
 
@@ -79,21 +64,11 @@ def _(mo):
     Here's some examples from the Matplotlib docs and across the web.
 
     Matplotlib offers a couple interfaces: one functional, one OOP. Let's take a look at the functional interface first:
-
-    ```python
-    # 4 lines of code get us a simple visual :)
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel("Some numbers")
-    plt.title("Basic line plot")
-
-    # get the current `Axes`
-    plt.gca()
-    ```
     """)
     return
 
 
-@app.cell(hide_code=True)
+@app.cell()
 def _(plt):
     # 4 lines of code get us a simple visual :)
     plt.plot([1, 2, 3, 4])
@@ -109,43 +84,11 @@ def _(plt):
 def _(mo):
     mo.md(r"""
     Now let's take a look at the OOP interface:
-
-    ```python
-    climate_data = pd.read_csv(
-        "https://assets.datacamp.com/production/repositories/3634/datasets/411add3f8570d5adf891127fd64095020210711b/climate_change.csv",
-        parse_dates=True,
-        index_col="date",
-    )
-
-    # plt.subplots returns a Figure and Axis object.
-    # here, we ask for 2 rows and one column that share an x-axis
-    _fig, _ax = plt.subplots(2, 1, sharex=True)
-
-    # Data is plotted by indexing a row
-    _ax[0].plot(
-        climate_data.index,
-        climate_data['co2']
-    )
-    _ax[1].plot(
-        climate_data.index,
-        climate_data['relative_temp']
-    )
-
-    # Chart customisations must also be called on each index
-    # The axis annotation methods are different to the plt.plot() interface
-    _ax[0].set_title("Global rise in C02 and relative temperature")
-    _ax[0].set_ylabel("C02 (ppm)")
-    _ax[1].set_xlabel("Year")
-    _ax[1].set_ylabel("Relative temperature (°C)")
-
-    # Return the Figure
-    _fig
-    ```
     """)
     return
 
 
-@app.cell(hide_code=True)
+@app.cell()
 def _(pd, plt):
     climate_data = pd.read_csv(
         "https://assets.datacamp.com/production/repositories/3634/datasets/411add3f8570d5adf891127fd64095020210711b/climate_change.csv",
@@ -184,37 +127,11 @@ def _(mo):
     mo.md("""
     ### 3d plots
     Everybody thinks 3D plots are cool. Here's an example which is available from the marimo snippets pane:
-
-    ```python
-    # Load and format data
-    dem = cbook.get_sample_data('jacksboro_fault_dem.npz')
-    _z = dem['elevation']
-    nrows, ncols = _z.shape
-    _x = np.linspace(dem['xmin'], dem['xmax'], ncols)
-    _y = np.linspace(dem['ymin'], dem['ymax'], nrows)
-    _x, _y = np.meshgrid(_x, _y)
-
-    region = np.s_[5:50, 5:50]
-    _x, _y, _z = _x[region], _y[region], _z[region]
-
-    # Set up plot
-    _fig, _ax = plt.subplots(subplot_kw=dict(projection='3d'))
-
-    ls = LightSource(270, 45)
-
-    # To use a custom hillshading mode, override the built-in shading and pass
-    # in the rgb colors of the shaded surface calculated from "shade".
-    rgb = ls.shade(_z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')
-    surf = _ax.plot_surface(_x, _y, _z, rstride=1, cstride=1, facecolors=rgb,
-                           linewidth=0, antialiased=False, shade=False)
-
-    plt.gca()
-    ```
     """)
     return
 
 
-@app.cell(hide_code=True)
+@app.cell()
 def _(LightSource, cbook, cm, np, plt):
     # Load and format data
     dem = cbook.get_sample_data('jacksboro_fault_dem.npz')
@@ -248,27 +165,11 @@ def _(mo):
     ### Maps
 
     Making maps with matplotlib is easiest using the [`Geopandas`](https://geopandas.org/en/stable/docs/user_guide/mapping.html) library. Geopandas provides spatially enabled dataframes, with a `.plot()` method. Anything that can be used in the `pyplot` interface can generally be used with `GeoDataFrame.plot()`
-
-    ```python
-    import geopandas
-    import geodatasets
-
-
-    # Create a GeoDataFrame from example dataset
-    chicago = geopandas.read_file(geodatasets.get_path("geoda.chicago_commpop"))
-
-    # Plot a choropleth of population in 2010
-    chicago.plot(
-        column="POP2010",
-        legend=True,
-        legend_kwds={"label": "Population in 2010", "orientation": "horizontal"},
-    )
-    ```
     """)
     return
 
 
-@app.cell(hide_code=True)
+@app.cell()
 def _(geodatasets, geopandas):
     # Create a GeoDataFrame from example dataset
     chicago = geopandas.read_file(geodatasets.get_path("geoda.chicago_commpop"))
@@ -406,7 +307,6 @@ def _(mo):
     ax
     ```
 
-    If you want to output the plot in the console area, use `plt.show()` or `fig.show()`.
 
     *There's also a third interface, to be used when embedding Matplotlib in GUI applications.
     """)
